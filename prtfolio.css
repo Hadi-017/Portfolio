@@ -365,9 +365,9 @@ body {
 .showcase-blue-circle,
 .showcase-charcoal-backdrop {
   position: absolute;
-  width: clamp(320px, 31vw, 460px);
-  height: clamp(230px, 23vw, 330px);
-  border-radius: 36px;
+  width: clamp(260px, 28vw, 400px);
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
   background: radial-gradient(circle at 50% 50%, rgba(51, 51, 51, 0.4) 0%, rgba(30, 30, 30, 0.2) 65%, transparent 100%);
   z-index: 1;
   top: 50%;
@@ -647,39 +647,42 @@ body {
 .tok-fn  { color: #facc15; }
 .tok-val { color: #fb923c; }
 
-/* Portrait Centerpiece Container - Fitted Dark Charcoal Frame */
+/* Portrait Centerpiece Container - Fitted Circular Charcoal Frame */
 .portrait-container {
   position: relative;
   z-index: 3;
-  width: clamp(320px, 31vw, 460px);
+  width: clamp(260px, 28vw, 400px);
+  aspect-ratio: 1 / 1;
   display: flex;
   justify-content: center;
-  align-items: flex-end;
+  align-items: center;
   margin: 0 auto;
-  margin-bottom: -10px;
-  background: radial-gradient(circle at 50% 25%, #3d3d3d 0%, #333333 55%, #222222 100%);
-  border-radius: 28px;
+  background: radial-gradient(circle at 50% 30%, #3d3d3d 0%, #333333 55%, #222222 100%);
+  border-radius: 50%;
   overflow: hidden;
-  box-shadow: 0 24px 50px -10px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  box-shadow: 0 24px 50px -10px rgba(0, 0, 0, 0.4), 0 0 0 2px rgba(255, 255, 255, 0.1);
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
 }
 
 .portrait-container:hover {
   transform: translateY(-5px);
-  box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.14);
+  box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(2, 132, 199, 0.4);
 }
 
 .portrait-img {
   width: 100%;
-  height: auto;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
   display: block;
-  object-fit: contain;
+  object-fit: cover;
+  object-position: center 15%;
   filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.28));
   transition: transform 0.35s ease;
 }
 
 .portrait-container:hover .portrait-img {
-  transform: scale(1.03);
+  transform: scale(1.05);
 }
 
 /* Handwritten Accent: Code Build Create */

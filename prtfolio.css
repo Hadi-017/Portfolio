@@ -6,9 +6,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fira+Code:wght@400;500;600&family=Oswald:wght@600;700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@500;700&display=swap');
 
 :root {
-  /* Color Palette */
-  --bg-page: #ffffff;
-  --bg-card: #ffffff;
+  /* Color Palette - Minimal & Elegant Light Gray */
+  --bg-page: #F1F1F1;
+  --bg-card: #F1F1F1;
   --text-main: #0f172a;
   --text-muted: #475569;
   --text-light: #64748b;
@@ -16,9 +16,9 @@
   --accent-blue-vibrant: #027dfd;
   --accent-blue-dark: #0369a1;
   --accent-blue-light: #f0f9ff;
-  --border-color: #e2e8f0;
-  --border-subtle: #f1f5f9;
-  --track-gray: #e2e8f0;
+  --border-color: #dedede;
+  --border-subtle: #e5e5e5;
+  --track-gray: #dcdcdc;
   
   /* Compatibility aliases */
   --accent-green: var(--accent-blue);
@@ -817,12 +817,12 @@ body {
 .project-image-box {
   width: 100%;
   aspect-ratio: 3 / 4;
-  background-color: #f7f7f6;
-  border: 1px solid var(--border-subtle);
-  border-radius: 4px;
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
   overflow: hidden;
   position: relative;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
 }
 
 .project-image-box img {
@@ -973,12 +973,13 @@ body {
 .quote-card {
   margin-top: 36px;
   border: 1px solid var(--border-color);
-  background-color: #fafafa;
-  border-radius: 4px;
+  background-color: #ffffff;
+  border-radius: 12px;
   padding: clamp(20px, 2.5vw, 28px);
   display: flex;
   align-items: flex-start;
   gap: 20px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
 }
 
 .quote-icon {
@@ -1316,6 +1317,19 @@ a.contact-value:hover {
   cursor: wait;
 }
 
+.form-submit-btn.loading .btn-icon {
+  animation: formBtnSpin 0.8s linear infinite;
+}
+
+@keyframes formBtnSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .form-status-banner {
   display: none;
   flex-direction: column;
@@ -1324,6 +1338,14 @@ a.contact-value:hover {
   border-radius: 8px;
   font-size: 12px;
   line-height: 1.45;
+}
+
+.form-status-banner code {
+  background: rgba(0, 0, 0, 0.08);
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
 }
 
 .form-status-banner.status-success {
@@ -1350,13 +1372,15 @@ a.contact-value:hover {
 /* Action CTA Box */
 .cta-box {
   width: 100%;
-  border: 1px solid var(--accent-green);
+  border: 1.5px solid var(--accent-green);
+  border-radius: 14px;
   padding: clamp(24px, 2.5vw, 32px) clamp(20px, 2vw, 28px);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   text-decoration: none;
-  background-color: transparent;
+  background-color: #ffffff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
   transition: var(--transition-smooth);
   position: relative;
 }

@@ -1,12 +1,50 @@
 /**
  * Contact & Messaging System for Hadi.T Portfolio
+ * Powered by EmailJS (https://www.emailjs.com/)
  */
 
+// ============================================================================
+// EMAILJS CONFIGURATION
+// Replace these placeholders with your actual credentials from:
+// https://dashboard.emailjs.com/
+//
+// 1. PUBLIC_KEY: Found in Account > API Keys > Public Key
+// 2. SERVICE_ID: Found in Email Services > Your Service (e.g. 'service_abc123')
+// 3. TEMPLATE_ID: Found in Email Templates > Your Template (e.g. 'template_xyz789')
+// ============================================================================
+const EMAILJS_CONFIG = {
+  PUBLIC_KEY: 'YOUR_PUBLIC_KEY',       // e.g. 'AbC123Def456Ghi78'
+  SERVICE_ID: 'YOUR_SERVICE_ID',       // e.g. 'service_xxxxxxx'
+  TEMPLATE_ID: 'YOUR_TEMPLATE_ID',     // e.g. 'template_xxxxxxx'
+  RECEIVER_EMAIL: 'hadithommankadan8411@gmail.com',
+};
+
 document.addEventListener('DOMContentLoaded', () => {
+  initEmailJS();
   initContactForm();
   initCopyEmail();
   initHeroContactScroll();
 });
+
+/**
+ * Initialize the EmailJS SDK
+ */
+function initEmailJS() {
+  if (typeof emailjs !== 'undefined') {
+    if (EMAILJS_CONFIG.PUBLIC_KEY && EMAILJS_CONFIG.PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
+      try {
+        emailjs.init({
+          publicKey: EMAILJS_CONFIG.PUBLIC_KEY,
+        });
+        console.log('✓ EmailJS initialized successfully.');
+      } catch (err) {
+        console.error('EmailJS initialization error:', err);
+      }
+    }
+  } else {
+    console.warn('EmailJS SDK is not loaded. Please ensure the CDN script is included in the HTML.');
+  }
+}
 
 /**
  * Initialize Contact Form Handling
@@ -22,10 +60,10 @@ function initContactForm() {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    // Clear previous status
+    // Clear previous status messages
     clearStatus(statusBanner);
 
-    // Get field values
+    // Get form input values
     const nameInput = document.getElementById('contact-name');
     const emailInput = document.getElementById('contact-email');
     const subjectInput = document.getElementById('contact-subject');
@@ -68,43 +106,108 @@ function initContactForm() {
       if (btnText) btnText.textContent = 'Sending Message...';
     }
 
-    // Prepare mailto link with encoded content
-    const emailTo = 'hadithommankadan8411@gmail.com';
+    // Helper to generate a fallback mailto URL
+    const emailTo = EMAILJS_CONFIG.RECEIVER_EMAIL;
     const emailSubject = encodeURIComponent(`[Portfolio] ${subject} - from ${name}`);
     const emailBody = encodeURIComponent(
       `Hi Hadi,\n\nName: ${name}\nEmail: ${email}\nSubject: ${subject}\n\nMessage:\n${message}\n\n---\nSent from your portfolio website`
     );
     const mailtoUrl = `mailto:${emailTo}?subject=${emailSubject}&body=${emailBody}`;
 
-    // Simulate sending delay for smooth UI feedback
-    setTimeout(() => {
-      // Trigger user's mail client
-      window.location.href = mailtoUrl;
+    // Check if user has entered real EmailJS credentials
+    const isConfigured =
+      typeof emailjs !== 'undefined' &&
+      EMAILJS_CONFIG.PUBLIC_KEY &&
+      EMAILJS_CONFIG.PUBLIC_KEY !== 'YOUR_PUBLIC_KEY' &&
+      EMAILJS_CONFIG.SERVICE_ID &&
+      EMAILJS_CONFIG.SERVICE_ID !== 'YOUR_SERVICE_ID' &&
+      EMAILJS_CONFIG.TEMPLATE_ID &&
+      EMAILJS_CONFIG.TEMPLATE_ID !== 'YOUR_TEMPLATE_ID';
 
-      // Show success message
+    if (!isConfigured) {
+      // Configuration notice for the developer + smooth fallback
+      setTimeout(() => {
+        showStatus(
+          statusBanner,
+          'error',
+          `⚠️ <strong>EmailJS setup needed:</strong> Please replace the placeholder keys in <code>contact.js</code> with your EmailJS <code>PUBLIC_KEY</code>, <code>SERVICE_ID</code>, and <code>TEMPLATE_ID</code>. In the meantime, you can send your message directly via email:`
+        );
+
+        const actionLink = document.createElement('a');
+        actionLink.href = mailtoUrl;
+        actionLink.className = 'status-action-link';
+        actionLink.textContent = 'Open in Email Client / App';
+        statusBanner.appendChild(actionLink);
+
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.classList.remove('loading');
+          if (btnText) btnText.textContent = 'Send Message';
+        }
+      }, 500);
+      return;
+    }
+
+    // Prepare template parameters
+    // We send common aliases so your EmailJS template variable names match effortlessly:
+    // {{name}}, {{from_name}}, {{email}}, {{from_email}}, {{reply_to}}, {{subject}}, {{message}}
+    const templateParams = {
+      name: name,
+      from_name: name,
+      email: email,
+      from_email: email,
+      reply_to: email,
+      subject: subject,
+      inquiry_type: subject,
+      message: message,
+      to_name: 'Hadi.T',
+      to_email: EMAILJS_CONFIG.RECEIVER_EMAIL,
+    };
+
+    try {
+      const response = await emailjs.send(
+        EMAILJS_CONFIG.SERVICE_ID,
+        EMAILJS_CONFIG.TEMPLATE_ID,
+        templateParams
+      );
+
+      console.log('EmailJS response:', response);
+
+      // Show success banner
       showStatus(
         statusBanner,
         'success',
-        `✓ Thank you, ${escapeHtml(name)}! Your message draft is ready. If your email app didn't open automatically, click below:`
+        `✓ Thank you, ${escapeHtml(name)}! Your message has been sent successfully. I will get back to you soon.`
       );
-
-      // Add a direct mailto action link inside status banner
-      const actionLink = document.createElement('a');
-      actionLink.href = mailtoUrl;
-      actionLink.className = 'status-action-link';
-      actionLink.textContent = 'Open in Email Client';
-      statusBanner.appendChild(actionLink);
 
       // Reset form fields
       form.reset();
 
-      // Reset button state
+    } catch (err) {
+      console.error('EmailJS error:', err);
+      const errDetail = err && err.text ? err.text : (err && err.message ? err.message : 'Unknown error');
+
+      // Show error banner with fallback link
+      showStatus(
+        statusBanner,
+        'error',
+        `✕ Could not send email via EmailJS (${escapeHtml(errDetail)}). Please try again or reach out directly:`
+      );
+
+      const actionLink = document.createElement('a');
+      actionLink.href = mailtoUrl;
+      actionLink.className = 'status-action-link';
+      actionLink.textContent = 'Send via Email Client instead';
+      statusBanner.appendChild(actionLink);
+
+    } finally {
+      // Restore submit button state
       if (submitBtn) {
         submitBtn.disabled = false;
         submitBtn.classList.remove('loading');
         if (btnText) btnText.textContent = 'Send Message';
       }
-    }, 600);
+    }
   });
 }
 
@@ -116,10 +219,9 @@ function initCopyEmail() {
   copyBtns.forEach((btn) => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
-      const email = btn.getAttribute('data-email') || 'hadithommankadan8411@gmail.com';
+      const email = btn.getAttribute('data-email') || EMAILJS_CONFIG.RECEIVER_EMAIL;
 
       navigator.clipboard.writeText(email).then(() => {
-        const originalText = btn.innerHTML;
         btn.classList.add('copied');
         btn.setAttribute('aria-label', 'Email copied to clipboard');
 
@@ -220,5 +322,11 @@ function clearStatus(banner) {
  * Helper: Escape HTML
  */
 function escapeHtml(str) {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }

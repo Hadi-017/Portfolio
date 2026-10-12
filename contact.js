@@ -13,9 +13,9 @@
 // 3. TEMPLATE_ID: Found in Email Templates > Your Template (e.g. 'template_xyz789')
 // ============================================================================
 const EMAILJS_CONFIG = {
-  PUBLIC_KEY: 'YOUR_PUBLIC_KEY',       // e.g. 'AbC123Def456Ghi78'
-  SERVICE_ID: 'YOUR_SERVICE_ID',       // e.g. 'service_xxxxxxx'
-  TEMPLATE_ID: 'YOUR_TEMPLATE_ID',     // e.g. 'template_xxxxxxx'
+  PUBLIC_KEY: '3AWtNG0bXVY8C3Y2B',       // EmailJS Public Key
+  SERVICE_ID: 'service_13quizj',          // EmailJS Service ID
+  TEMPLATE_ID: 'template_ip8v7zd',        // EmailJS Template ID
   RECEIVER_EMAIL: 'hadithommankadan8411@gmail.com',
 };
 
@@ -168,7 +168,8 @@ function initContactForm() {
       const response = await emailjs.send(
         EMAILJS_CONFIG.SERVICE_ID,
         EMAILJS_CONFIG.TEMPLATE_ID,
-        templateParams
+        templateParams,
+        EMAILJS_CONFIG.PUBLIC_KEY
       );
 
       console.log('EmailJS response:', response);
